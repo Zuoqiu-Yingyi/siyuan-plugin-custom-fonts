@@ -16,25 +16,19 @@
  */
 
 import siyuan from "siyuan";
-
+import { Client } from "@siyuan-community/siyuan-sdk";
 import {
     FLAG_MOBILE,
 } from "@workspace/utils/env/front-end";
 import { Logger } from "@workspace/utils/logger";
-import {
-    removeElementById,
-    moveElementToHeadById,
-} from "@workspace/utils/dom";
-import {
-    updateStyleById,
-} from "@workspace/utils/dom/style";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import { classify } from "@workspace/utils/font";
 
-import type { FontData } from "@workspace/types/misc/browser";
-
 import { type IListItem } from "@workspace/components/siyuan/list/list";
 import List from "@workspace/components/siyuan/list/List.svelte"
+
+import { fontData2CssFontStyle } from "@workspace/utils/font/css";
+import { getBlockMenuContext } from "@workspace/utils/siyuan/menu/block";
 
 import Settings from "./components/Settings.svelte";
 
@@ -43,14 +37,19 @@ import {
 } from "./utils/style";
 import { DEFAULT_CONFIG } from "./configs/default";
 import type { IConfig } from "./types/config";
+import type { IClickBlockIconEvent } from "@workspace/types/siyuan/events";
+import type { I18N } from "@/utils/i18n";
 
 export default class CustomFontsPlugin extends siyuan.Plugin {
     static readonly GLOBAL_CONFIG_NAME = "global-config";
 
+    declare public readonly i18n: I18N;
+
     public readonly siyuan = siyuan;
     public readonly logger: InstanceType<typeof Logger>;
+    public readonly client: InstanceType<typeof Client>;
 
-    protected readonly STYLE_ELEMENT_ID: string;
+    protected readonly STYLE_SNIPPET_NAME: string;
     protected readonly SETTINGS_DIALOG_ID: string;
     protected readonly SYSTEM_FONTS_DIALOG_ID: string;
     protected readonly USABLE_FONTS_DIALOG_ID: string;
@@ -61,7 +60,9 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         super(options);
 
         this.logger = new Logger(this.name);
-        this.STYLE_ELEMENT_ID = `plugin-${this.name}-style`;
+        this.client = new Client();
+
+        this.STYLE_SNIPPET_NAME = `plugin-${this.name}-style`;
         this.SETTINGS_DIALOG_ID = `plugin-${this.name}-settings-dialog`;
         this.SYSTEM_FONTS_DIALOG_ID = `plugin-${this.name}-system-fonts-dialog`;
         this.USABLE_FONTS_DIALOG_ID = `plugin-${this.name}-usable-fonts-dialog`;
@@ -73,17 +74,46 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
             })
             .catch(error => this.logger.error(error))
-            .finally(() => {
-                this.updateStyle();
+            .finally(async () => {
+                await this.updateStyle();
+
+                this.eventBus.on("click-blockicon", this.blockMenuEventListener);
+
+                /* 注册命令 */
+                this.addCommand({
+                    langKey: "show-system-fonts",
+                    langText: this.i18n.settings.generalSettings.showSystemFonts.title,
+                    hotkey: "",
+                    callback: () => this.showSystemFonts(),
+                });
+                this.addCommand({
+                    langKey: "show-usable-fonts",
+                    langText: this.i18n.settings.generalSettings.showUsableFonts.title,
+                    hotkey: "",
+                    callback: () => this.showUsableFonts(),
+                });
             });
     }
 
     onLayoutReady(): void {
-        moveElementToHeadById(this.STYLE_ELEMENT_ID);
     }
 
     onunload(): void {
-        removeElementById(this.STYLE_ELEMENT_ID);
+        this.eventBus.off("click-blockicon", this.blockMenuEventListener);
+
+        this.client.getSnippet({
+            type: "css",
+            enabled: 2,
+        }).then(response => {
+            const snippets = response.data.snippets;
+            const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME);
+            if (snippet) {
+                snippet.enabled = false;
+                this.client.setSnippet({
+                    snippets,
+                });
+            }
+        });
     }
 
     openSetting(): void {
@@ -105,20 +135,41 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     }
 
     /* 更新样式 */
-    public updateStyle(): void {
-        updateStyleById(
-            this.STYLE_ELEMENT_ID,
-            [
-                this.config.css.enable ? this.config.css.code : undefined,
-                fontFamilyStyle({
-                    base: this.config.fonts.base.enable ? this.config.fonts.base.list : undefined,
-                    code: this.config.fonts.code.enable ? this.config.fonts.code.list : undefined,
-                    graph: this.config.fonts.graph.enable ? this.config.fonts.graph.list : undefined,
-                    math: this.config.fonts.math.enable ? this.config.fonts.math.list : undefined,
-                    emoji: this.config.fonts.emoji.enable ? this.config.fonts.emoji.list : undefined,
-                }),
-            ].join("\n\n"),
-        );
+    public async updateStyle(): Promise<void> {
+        const response = await this.client.getSnippet({
+            type: "css",
+            enabled: 2,
+        });
+        const snippets = response.data.snippets;
+        const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME)
+        const content = [
+            this.config.css.enable ? this.config.css.code : undefined,
+            fontFamilyStyle({
+                base: this.config.fonts.base.enable ? this.config.fonts.base.list : undefined,
+                code: this.config.fonts.code.enable ? this.config.fonts.code.list : undefined,
+                graph: this.config.fonts.graph.enable ? this.config.fonts.graph.list : undefined,
+                math: this.config.fonts.math.enable ? this.config.fonts.math.list : undefined,
+                emoji: this.config.fonts.emoji.enable ? this.config.fonts.emoji.list : undefined,
+            }),
+        ].join("\n\n");
+
+        if (snippet) {
+            snippet.enabled = true;
+            snippet.content = content;
+        }
+        else {
+            snippets.push({
+                id: globalThis.Lute.NewNodeID(),
+                type: "css",
+                name: this.STYLE_SNIPPET_NAME,
+                memo: "",
+                content,
+                enabled: true,
+            });
+        }
+        await this.client.setSnippet({
+            snippets,
+        });
     }
 
     /* 重置插件配置 */
@@ -191,11 +242,12 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                     meta: reaular_font.family,
                     style: `font-family: "${reaular_font.family}"`,
                     fold: true,
+                    // indent: "1em",
                     children: font_list.map(font => ({
                         icon: "#iconFont",
                         text: font.fullName,
                         meta: font.style,
-                        style: `font-family: "${font.family}"`,
+                        style: `font: ${fontData2CssFontStyle(font, 14)};`,
                     })),
                 });
             });
@@ -215,6 +267,74 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         }
         else { // 当前应用不支持查询本地字体
             siyuan.showMessage(`${this.i18n.message.notSupportQueryLocalFonts}<br />[${this.i18n.displayName} <code class="fn__code">${this.name}</code>]`, undefined, "error");
+        }
+    }
+
+    /* 块菜单 */
+    protected readonly blockMenuEventListener = (e: IClickBlockIconEvent) => {
+        // this.logger.debug(e);
+        const detail = e.detail;
+        const context = getBlockMenuContext(e.detail);
+        if (context) {
+            const submenu: siyuan.IMenuItemOption[] = [];
+
+            /* 清除字体 */
+            submenu.push({
+                icon: "iconClear",
+                label: this.i18n.menu.clearFontStyle.label,
+                click: () => {
+                    context.blocks.forEach(async block => {
+                        block.element.style.fontFamily = null;
+                        const style = block.element.getAttribute("style");
+                        this.client.setBlockAttrs({
+                            id: block.id,
+                            attrs: {
+                                style,
+                            },
+                        });
+                    });
+                },
+            });
+
+            submenu.push({
+                type: "separator",
+            });
+
+            /* 设置字体 */
+            this.config.menu.block.list.forEach(font => {
+                if (/^\s*$/.test(font)) return;
+                else font = font.trim();
+
+                submenu.push({
+                    icon: "iconFont",
+                    label: font,
+                    accelerator: `font-family: ${font}`,
+                    click: () => {
+                        context.blocks.forEach(async block => {
+                            block.element.style.fontFamily = font;
+                            const style = block.element.getAttribute("style");
+                            this.client.setBlockAttrs({
+                                id: block.id,
+                                attrs: {
+                                    style,
+                                },
+                            });
+                        });
+                    },
+                    bind: element => {
+                        const label: HTMLElement = element.querySelector(".b3-menu__label");
+                        if (label) {
+                            label.style.fontFamily = font;
+                        }
+                    },
+                });
+            });
+
+            detail.menu.addItem({
+                icon: "iconFont",
+                label: this.i18n.menu.customBlockFont.label,
+                submenu,
+            });
         }
     }
 };
