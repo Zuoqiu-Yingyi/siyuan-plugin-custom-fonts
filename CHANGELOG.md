@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/compare/v1.1.0...v1.1.1) (2023-08-20)
+
+
+### Bug Fixes
+
+* [#5](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/issues/5) 修复设置 `css` 代码片段时移除 `js` 代码片段的问题 | Fix the issue of removing the `js` code snippet when setting the `css` code snippet. ([7f5ab3b](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/commit/7f5ab3ba88f8d6a8d20c07cfed8426db3b1187f4))
+
 ## [1.1.0](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/compare/v1.0.0...v1.1.0) (2023-08-02)
 
 
