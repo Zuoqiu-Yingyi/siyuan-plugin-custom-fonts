@@ -102,11 +102,11 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         this.eventBus.off("click-blockicon", this.blockMenuEventListener);
 
         this.client.getSnippet({
-            type: "css",
+            type: "all",
             enabled: 2,
         }).then(response => {
             const snippets = response.data.snippets;
-            const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME);
+            const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME && s.type === "css");
             if (snippet) {
                 snippet.enabled = false;
                 this.client.setSnippet({
@@ -137,11 +137,11 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     /* 更新样式 */
     public async updateStyle(): Promise<void> {
         const response = await this.client.getSnippet({
-            type: "css",
+            type: "all",
             enabled: 2,
         });
         const snippets = response.data.snippets;
-        const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME)
+        const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME && s.type === "css")
         const content = [
             this.config.css.enable ? this.config.css.code : undefined,
             fontFamilyStyle({
@@ -242,7 +242,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                     meta: reaular_font.family,
                     style: `font-family: "${reaular_font.family}"`,
                     fold: true,
-                    // indent: "1em",
+                    indent: "18px",
                     children: font_list.map(font => ({
                         icon: "#iconFont",
                         text: font.fullName,
