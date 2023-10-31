@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/compare/v1.1.1...v1.2.0) (2023-10-31)
+
+
+### Miscellaneous
+
+* **custom-fonts:** 重新添加附属仓库 `custom-fonts` | Re-add sub-repository `custom-fonts`. ([b6b7f1f](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/commit/b6b7f1fe4f304b897133b4260f425a258c671df5))
+
+
+### Features
+
+* **jupyter-client:** 添加折叠/展开列表功能 | Add fold/unfold list function. ([4910604](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/commit/49106046bba617106aa4bee38b0cb515b4298980))
+
 ## [1.1.1](https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts/compare/v1.1.0...v1.1.1) (2023-08-20)
 
 
