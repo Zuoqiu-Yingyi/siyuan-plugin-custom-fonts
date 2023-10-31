@@ -53,6 +53,18 @@
         },
         "title": "程式碼字型"
       },
+      "editor": {
+        "enable": {
+          "description": "啟用自定義編輯器字型列表功能，關閉後則使用主題定義的編輯器字型列表",
+          "title": "啟用"
+        },
+        "fontsList": {
+          "description": "自定義編輯器字型列表，每行一個字型名稱",
+          "placeholder": "請在這裡輸入自定義的編輯器字型列表",
+          "title": "自定義編輯器字型列表"
+        },
+        "title": "編輯器字型"
+      },
       "emoji": {
         "enable": {
           "description": "啟用自定義表情符號字型列表功能，關閉後則使用主題定義的表情符號字型列表",
@@ -88,6 +100,11 @@
           "title": "自定義數學字型列表"
         },
         "title": "數學字型"
+      },
+      "preview": {
+        "description": "預覽字型樣式",
+        "placeholder": "請在這裡輸入需要預覽的文字",
+        "title": "字型預覽"
       },
       "title": "字型設定"
     },

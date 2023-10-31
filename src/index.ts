@@ -29,6 +29,7 @@ import List from "@workspace/components/siyuan/list/List.svelte"
 
 import { fontData2CssFontStyle } from "@workspace/utils/font/css";
 import { getBlockMenuContext } from "@workspace/utils/siyuan/menu/block";
+import { renderSnippets } from "@workspace/utils/siyuan/snippet";
 
 import Settings from "./components/Settings.svelte";
 
@@ -69,6 +70,24 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     }
 
     onload(): void {
+        /**
+         * 注册快捷键命令
+         * 在 onload 结束后即刻解析, 因此不能在回调函数中注册
+         */
+        this.addCommand({
+            langKey: "show-system-fonts",
+            langText: this.i18n.settings.generalSettings.showSystemFonts.title,
+            hotkey: "",
+            callback: () => this.showSystemFonts(),
+        });
+        this.addCommand({
+            langKey: "show-usable-fonts",
+            langText: this.i18n.settings.generalSettings.showUsableFonts.title,
+            hotkey: "",
+            callback: () => this.showUsableFonts(),
+        });
+
+        /* 加载数据 */
         this.loadData(CustomFontsPlugin.GLOBAL_CONFIG_NAME)
             .then(config => {
                 this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
@@ -78,20 +97,6 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                 await this.updateStyle();
 
                 this.eventBus.on("click-blockicon", this.blockMenuEventListener);
-
-                /* 注册命令 */
-                this.addCommand({
-                    langKey: "show-system-fonts",
-                    langText: this.i18n.settings.generalSettings.showSystemFonts.title,
-                    hotkey: "",
-                    callback: () => this.showSystemFonts(),
-                });
-                this.addCommand({
-                    langKey: "show-usable-fonts",
-                    langText: this.i18n.settings.generalSettings.showUsableFonts.title,
-                    hotkey: "",
-                    callback: () => this.showUsableFonts(),
-                });
             });
     }
 
@@ -121,8 +126,8 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         const dialog = new siyuan.Dialog({
             title: `${this.i18n.displayName} <code class="fn__code">${this.name}</code>`,
             content: `<div id="${that.SETTINGS_DIALOG_ID}" class="fn__flex-column" />`,
-            width: FLAG_MOBILE ? "92vw" : "768px",
-            height: FLAG_MOBILE ? undefined : "640px",
+            width: FLAG_MOBILE ? "92vw" : "960px",
+            height: FLAG_MOBILE ? undefined : "720px",
         });
         const settings = new Settings({
             target: dialog.element.querySelector(`#${that.SETTINGS_DIALOG_ID}`),
@@ -141,11 +146,12 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             enabled: 2,
         });
         const snippets = response.data.snippets;
-        const snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME && s.type === "css")
+        var snippet = snippets.find(s => s.name === this.STYLE_SNIPPET_NAME && s.type === "css")
         const content = [
             this.config.css.enable ? this.config.css.code : undefined,
             fontFamilyStyle({
                 base: this.config.fonts.base.enable ? this.config.fonts.base.list : undefined,
+                editor: this.config.fonts.editor.enable ? this.config.fonts.editor.list : undefined,
                 code: this.config.fonts.code.enable ? this.config.fonts.code.list : undefined,
                 graph: this.config.fonts.graph.enable ? this.config.fonts.graph.list : undefined,
                 math: this.config.fonts.math.enable ? this.config.fonts.math.list : undefined,
@@ -158,18 +164,20 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             snippet.content = content;
         }
         else {
-            snippets.push({
+            snippet = {
                 id: globalThis.Lute.NewNodeID(),
                 type: "css",
                 name: this.STYLE_SNIPPET_NAME,
                 memo: "",
                 content,
                 enabled: true,
-            });
+            };
+            snippets.push(snippet);
         }
         await this.client.setSnippet({
             snippets,
         });
+        renderSnippets([snippet]);
     }
 
     /* 重置插件配置 */

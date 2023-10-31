@@ -18,6 +18,20 @@
 import type { IConfig } from "@/types/config";
 import manifest from "~/public/plugin.json";
 
+const DEFAULT_FONT_PREVIEW = `
+|\`\`--==[[]]\\\\;;'',,..//~~!!@@##$$%%^^&&**(())__++{{}}||::""<<>>??|
+|｀－＝［］＼；＇，．／￣！＠＃＄％＾＆＊（）＿＋｛｝｜：＂＜＞？|
+|0011223344556677889900112233445566778899001122334455667788990011|
+|０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１|
+|aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzzaabbccddeeff|
+|ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚａｂｃｄｅｆ|
+|AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQRRSSTTUUVVWWXXYYZZAABBCCDDEEFF|
+|ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺＡＢＣＤＥＦ|
+|零一二三四五六七八九零一二三四五六七八九零一二三四五六七八九零一|
+|                                                                |
+|　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　|
+`.trim();
+
 /* 默认配置选项 */
 export const DEFAULT_CONFIG: IConfig = {
     css: {
@@ -33,6 +47,7 @@ export const DEFAULT_CONFIG: IConfig = {
     fonts: {
         base: {
             enable: false,
+            preview: DEFAULT_FONT_PREVIEW,
             list: [
                 "Helvetica Neue",
                 "Luxi Sans",
@@ -49,8 +64,15 @@ export const DEFAULT_CONFIG: IConfig = {
                 "EmojiSymbols",
             ],
         },
+        editor: {
+            enable: true,
+            preview: DEFAULT_FONT_PREVIEW,
+            list: [
+            ],
+        },
         code: {
             enable: false,
+            preview: DEFAULT_FONT_PREVIEW,
             list: [
                 "JetBrainsMono-Regular",
                 "mononoki",
@@ -70,12 +92,14 @@ export const DEFAULT_CONFIG: IConfig = {
         },
         graph: {
             enable: false,
+            preview: DEFAULT_FONT_PREVIEW,
             list: [
                 "mononoki",
             ],
         },
         math: {
             enable: false,
+            preview: DEFAULT_FONT_PREVIEW,
             list: [
                 "KaTeX_Math",
                 "KaTeX_Main",
@@ -94,6 +118,7 @@ export const DEFAULT_CONFIG: IConfig = {
         },
         emoji: {
             enable: true,
+            preview: DEFAULT_FONT_PREVIEW,
             list: [
                 "Twemoji Mozilla",
 

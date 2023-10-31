@@ -42,15 +42,14 @@ A plugin for [SiYuan Note](https://github.com/siyuan-note/siyuan) that allows yo
   * Can dynamically load local/network font files through [@font-face](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face).
 * Customize the font list of various elements in the interface:
 
-  * `Basic font`: the font used in the interface
-  * `Code font`: the font used in inline code and code blocks
-  * `Chart font`: the font used in relationship diagrams
-  * `Math font`: the font used in inline formulas and formula blocks
-  * `Emoji font`: the font used in emojis (used for document icons)
+  * `Basic font`: the fonts used in the interface
+  * `Editor font`: the fonts used in editor
+  * `Code font`: the fonts used in inline code, code blocks and text input boxes
+  * `Chart font`: the fonts used in relationship diagrams
+  * `Math font`: the fonts used in inline formulas and formula blocks
+  * `Emoji font`: the fonts used in emojis (used for document icons)
 
 ### Setting Introduction
-
-After installing this plugin, click <kbd>SiYuan Settings</kbd> > <kbd>Marketplace</kbd> > <kbd>Downloaded</kbd> > <kbd>Plugins</kbd> > <kbd>Custom Fonts (this plugin)</kbd> > <kbd>Settings</kbd> button to open the plugin's settings panel.
 
 * `General Settings`
 
@@ -96,9 +95,15 @@ After installing this plugin, click <kbd>SiYuan Settings</kbd> > <kbd>Marketplac
   * `Base Font`: Font used for the user interface
 
     * Customizable font list for text outside of the editor
-  * `Code Font`: Font used for inline code and code blocks
+  * `Editor font`: The font used for text in the editor.
 
-    * Customizable font list for text in `inline code` and `code blocks` within the editor
+    * This tab allows customization of the font list used for text in the editor.
+    * On the desktop, this font list has lower priority than the `SiYuan Settings`→`Editor`→`Font` setting.
+
+      * To apply this font list on the desktop, set the `SiYuan Settings`→`Editor`→`Font` setting to `Default`.
+  * `Code font`: The font used for inline code, code blocks, and text input boxes.
+
+    * This tab allows customization of the font used for text in `inline code`, `code blocks`, and `text input boxes` in the editor.
   * `Chart Font`: Font used for relationship diagrams
 
     * Customizable font list for text in relationship diagrams
@@ -108,7 +113,6 @@ After installing this plugin, click <kbd>SiYuan Settings</kbd> > <kbd>Marketplac
   * `Emoji Font`: Font used for emoji symbols (used in document icons)
 
     * Customizable font list for emoji symbols used in document icons
-
 * `Menu Settings`
 
   * `Block font list`

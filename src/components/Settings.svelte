@@ -39,6 +39,13 @@
 
     const i18n = plugin.i18n as unknown as I18N;
 
+    const base_font_family = "var(--b3-font-family)";
+    const editor_font_family = "var(--b3-font-family-protyle)";
+    const code_font_family = "var(--b3-font-family-code)";
+    const graph_font_family = "var(--b3-font-family-graph)";
+    const math_font_family = "var(--b3-font-family-math)";
+    const emoji_font_family = "var(--b3-font-family-emoji)";
+
     function updated() {
         plugin.updateConfig(config);
     }
@@ -63,6 +70,7 @@
 
     enum TabKey {
         base,
+        editor,
         code,
         graph,
         math,
@@ -105,6 +113,12 @@
                 text: i18n.settings.fontsSettings.base.title,
                 name: i18n.settings.fontsSettings.base.title,
                 icon: "🗛",
+            },
+            {
+                key: TabKey.editor,
+                text: i18n.settings.fontsSettings.editor.title,
+                name: i18n.settings.fontsSettings.editor.title,
+                icon: "🖺",
             },
             {
                 key: TabKey.code,
@@ -254,6 +268,27 @@
                     />
                 </Item>
 
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={base_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.base.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.base.preview = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
                 <!-- 自定义字体列表 -->
                 <Item
                     block={true}
@@ -280,10 +315,79 @@
                 </Item>
             </div>
 
-            <!-- 标签页 2 - 代码字体设置 -->
+            <!-- 标签页 2 - 编辑器字体设置 -->
             <div
                 data-type={tabs.fonts[1].name}
                 class:fn__none={tabs.fonts[1].key !== focusTab}
+            >
+                <!-- 是否启用自定义字体列表 -->
+                <Item
+                    title={i18n.settings.fontsSettings.editor.enable.title}
+                    text={i18n.settings.fontsSettings.editor.enable.description}
+                >
+                    <Input
+                        slot="input"
+                        type={ItemType.checkbox}
+                        settingKey="enable"
+                        settingValue={config.fonts.editor.enable}
+                        on:changed={e => {
+                            config.fonts.editor.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={editor_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.editor.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.editor.preview = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 自定义字体列表 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.editor.fontsList.title}
+                    text={i18n.settings.fontsSettings.editor.fontsList.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        height={textareaHeight}
+                        settingKey="list"
+                        settingValue={config.fonts.editor.list.join("\n")}
+                        placeholder={i18n.settings.fontsSettings.editor.fontsList.placeholder}
+                        on:changed={e => {
+                            if (e.detail.value === "") {
+                                config.fonts.editor.list = [];
+                            } else {
+                                config.fonts.editor.list = e.detail.value.split("\n");
+                            }
+                            updated();
+                        }}
+                    />
+                </Item>
+            </div>
+
+            <!-- 标签页 3 - 代码字体设置 -->
+            <div
+                data-type={tabs.fonts[2].name}
+                class:fn__none={tabs.fonts[2].key !== focusTab}
             >
                 <!-- 是否启用自定义字体列表 -->
                 <Item
@@ -297,6 +401,27 @@
                         settingValue={config.fonts.code.enable}
                         on:changed={e => {
                             config.fonts.code.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={code_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.code.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.code.preview = e.detail.value;
                             updated();
                         }}
                     />
@@ -328,10 +453,10 @@
                 </Item>
             </div>
 
-            <!-- 标签页 3 - 图表字体设置 -->
+            <!-- 标签页 4 - 图表字体设置 -->
             <div
-                data-type={tabs.fonts[2].name}
-                class:fn__none={tabs.fonts[2].key !== focusTab}
+                data-type={tabs.fonts[3].name}
+                class:fn__none={tabs.fonts[3].key !== focusTab}
             >
                 <!-- 是否启用自定义字体列表 -->
                 <Item
@@ -345,6 +470,27 @@
                         settingValue={config.fonts.graph.enable}
                         on:changed={e => {
                             config.fonts.graph.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={graph_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.graph.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.graph.preview = e.detail.value;
                             updated();
                         }}
                     />
@@ -376,10 +522,10 @@
                 </Item>
             </div>
 
-            <!-- 标签页 4 - 数学字体设置 -->
+            <!-- 标签页 5 - 数学字体设置 -->
             <div
-                data-type={tabs.fonts[3].name}
-                class:fn__none={tabs.fonts[3].key !== focusTab}
+                data-type={tabs.fonts[4].name}
+                class:fn__none={tabs.fonts[4].key !== focusTab}
             >
                 <!-- 是否启用自定义字体列表 -->
                 <Item
@@ -393,6 +539,27 @@
                         settingValue={config.fonts.math.enable}
                         on:changed={e => {
                             config.fonts.math.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={math_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.math.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.math.preview = e.detail.value;
                             updated();
                         }}
                     />
@@ -424,10 +591,10 @@
                 </Item>
             </div>
 
-            <!-- 标签页 5 - 表情符号字体设置 -->
+            <!-- 标签页 6 - 表情符号字体设置 -->
             <div
-                data-type={tabs.fonts[4].name}
-                class:fn__none={tabs.fonts[4].key !== focusTab}
+                data-type={tabs.fonts[5].name}
+                class:fn__none={tabs.fonts[5].key !== focusTab}
             >
                 <!-- 是否启用自定义字体列表 -->
                 <Item
@@ -441,6 +608,27 @@
                         settingValue={config.fonts.emoji.enable}
                         on:changed={e => {
                             config.fonts.emoji.enable = e.detail.value;
+                            updated();
+                        }}
+                    />
+                </Item>
+
+                <!-- 字体样式预览 -->
+                <Item
+                    block={true}
+                    title={i18n.settings.fontsSettings.preview.title}
+                    text={i18n.settings.fontsSettings.preview.description}
+                >
+                    <Input
+                        slot="input"
+                        block={true}
+                        type={ItemType.textarea}
+                        fontFamily={emoji_font_family}
+                        settingKey="preview"
+                        settingValue={config.fonts.emoji.preview}
+                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                        on:changed={e => {
+                            config.fonts.emoji.preview = e.detail.value;
                             updated();
                         }}
                     />
