@@ -53,6 +53,18 @@
         },
         "title": "代码字体"
       },
+      "editor": {
+        "enable": {
+          "description": "启用自定义编辑器字体列表功能，关闭后则使用主题定义的编辑器字体列表",
+          "title": "启用"
+        },
+        "fontsList": {
+          "description": "自定义编辑器字体列表，每行一个字体名称",
+          "placeholder": "请在这里输入自定义的编辑器字体列表",
+          "title": "自定义编辑器字体列表"
+        },
+        "title": "编辑器字体"
+      },
       "emoji": {
         "enable": {
           "description": "启用自定义表情符号字体列表功能，关闭后则使用主题定义的表情符号字体列表",
@@ -88,6 +100,11 @@
           "title": "自定义数学字体列表"
         },
         "title": "数学字体"
+      },
+      "preview": {
+        "description": "预览字体样式",
+        "placeholder": "请在这里输入需要预览的文本",
+        "title": "字体预览"
       },
       "title": "字体设置"
     },

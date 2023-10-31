@@ -2,8 +2,24 @@
     "name": "custom-fonts",
     "author": "Zuoqiu Yingyi",
     "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts",
-    "version": "1.1.1",
-    "minAppVersion": "2.9.8",
+    "version": "1.2.0",
+    "minAppVersion": "2.10.13",
+    "keywords": [
+        "字体",
+        "字體",
+        "字型",
+        "font",
+        "字族",
+        "font family",
+        "字体列表",
+        "字體列表",
+        "字型列表",
+        "font list",
+        "块字体",
+        "塊字體",
+        "塊字型",
+        "block font"
+    ],
     "backends": [
         "all"
     ],

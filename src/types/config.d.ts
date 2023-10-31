@@ -24,12 +24,14 @@ export interface ICSS {
 /* 字体列表 */
 export interface IFont {
     enable: boolean, // 是否启用
+    preview: string, // 预览文本内容
     list: string[], // 字体列表
 }
 
 /* 字体设置 */
 export interface IFonts {
     base: IFont, // 基础字体列表
+    editor: IFont, // 编辑器字体列表
     code: IFont, // 代码字体列表
     graph: IFont, // 关系图字体列表
     math: IFont, // 数学公式字体列表
@@ -37,7 +39,7 @@ export interface IFonts {
 }
 
 export interface IMenu {
-    block: IFont, // 自定义块字体
+    block: Omit<IFont, "preview">, // 自定义块字体
 }
 
 export interface IConfig {

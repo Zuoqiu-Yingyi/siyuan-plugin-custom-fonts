@@ -53,6 +53,18 @@
         },
         "title": "Code Font"
       },
+      "editor": {
+        "enable": {
+          "description": "Enable custom editor font list, use theme-defined editor font list if disabled",
+          "title": "Enable"
+        },
+        "fontsList": {
+          "description": "Custom editor font list, one font name per line",
+          "placeholder": "Enter custom editor font list here",
+          "title": "Custom Editor Font List"
+        },
+        "title": "Editor Font"
+      },
       "emoji": {
         "enable": {
           "description": "Enable custom emoji font list, use theme-defined emoji font list if disabled",
@@ -88,6 +100,11 @@
           "title": "Custom Math Font List"
         },
         "title": "Math Font"
+      },
+      "preview": {
+        "description": "Preview Font Styles",
+        "placeholder": "Please enter the text to preview here",
+        "title": "Font Preview"
       },
       "title": "Font Settings"
     },

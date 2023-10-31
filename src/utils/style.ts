@@ -45,6 +45,7 @@ export function washFontList(fonts: string[]): string[] {
 /**
  * 字体样式
  * @params fontList.base: 基础字体列表
+ * @params fontList.editor: 编辑器字体列表
  * @params fontList.code: 代码字体列表
  * @params fontList.graph: 关系图字体列表
  * @params fontList.math: 数学公式字体列表
@@ -53,6 +54,7 @@ export function washFontList(fonts: string[]): string[] {
  */
 export function fontFamilyStyle(fontList: {
     base?: string[],
+    editor?: string[],
     code?: string[],
     graph?: string[],
     math?: string[],
@@ -63,6 +65,10 @@ export function fontFamilyStyle(fontList: {
     if (fontList.base?.length > 0) {
         const base = washFontList(fontList.base);
         css.push(`    --b3-font-family: ${base.join(", ")};`);
+    }
+    if (fontList.editor?.length > 0) {
+        const editor = washFontList(fontList.editor);
+        css.push(`    --b3-font-family-protyle: ${editor.join(", ")};`);
     }
     if (fontList.code?.length > 0) {
         const code = washFontList(fontList.code);
