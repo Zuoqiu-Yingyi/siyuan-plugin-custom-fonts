@@ -2,7 +2,7 @@
     "name": "custom-fonts",
     "author": "Zuoqiu Yingyi",
     "url": "https://github.com/Zuoqiu-Yingyi/siyuan-plugin-custom-fonts",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "minAppVersion": "2.10.13",
     "keywords": [
         "字体",
@@ -46,7 +46,7 @@
         "patreon": "",
         "github": "",
         "custom": [
-            "https://afdian.net/a/zuoqiu",
+            "https://afdian.com/a/zuoqiu",
             "https://ko-fi.com/zuoqiu"
         ]
     }
