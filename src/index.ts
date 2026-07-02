@@ -27,21 +27,22 @@ import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import {
     getBlockMenuContext,
-    type IOtherBlockMenuDetail,
+
 } from "@workspace/utils/siyuan/menu/block";
 import { renderSnippets } from "@workspace/utils/siyuan/snippet";
-
-import Settings from "./components/Settings.svelte";
 
 import { DEFAULT_CONFIG } from "./configs/default";
 import {
     fontFamilyStyle,
 } from "./utils/style";
 
+import Settings from "./components/Settings.svelte";
+
 import type { IListItem } from "@workspace/components/siyuan/list/list";
 import type { FontData } from "@workspace/types/misc/browser";
 import type { IClickBlockIconEvent } from "@workspace/types/siyuan/events";
 import type { Modify } from "@workspace/types/utils/readonly";
+import type { IOtherBlockMenuDetail } from "@workspace/utils/siyuan/menu/block";
 
 import type { I18N } from "@/utils/i18n";
 
