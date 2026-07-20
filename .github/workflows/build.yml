@@ -44,7 +44,7 @@ jobs:
         id: pnpm-install
         with:
           # pnpm 版本号 | pnpm version
-          # version: 8
+          version: 11
 
           # 是否安装 npm 包 | if install npm package?
           run_install: false
