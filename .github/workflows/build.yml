@@ -48,7 +48,7 @@ jobs:
 
           # 是否安装 npm 包 | if install npm package?
           run_install: false
-          cache: true
+          cache: false
 
       # Install dependencies
       - name: Install dependencies
