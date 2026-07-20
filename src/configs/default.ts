@@ -33,6 +33,57 @@ const DEFAULT_FONT_PREVIEW = `
 `.trim();
 /* eslint-enable no-irregular-whitespace */
 
+const FONT_FAMILY = [
+    "Emojis Additional",
+    "Emojis Reset",
+    "BlinkMacSystemFont",
+    "Helvetica",
+    "Luxi Sans",
+    "DejaVu Sans",
+    "arial",
+    "sans-serif",
+    "emojis",
+] as const;
+
+const FONT_FAMILY_PROTYLE = [
+    ...FONT_FAMILY,
+] as const;
+
+const FONT_FAMILY_CODE = [
+    "Emojis Additional",
+    "Emojis Reset",
+    "JetBrainsMono-Regular",
+    "mononoki",
+    "Consolas",
+    "Liberation Mono",
+    ...FONT_FAMILY,
+] as const;
+
+const FONT_FAMILY_GRAPH = [
+    "arial",
+] as const;
+
+const FONT_FAMILY_MATH = [
+    "KaTeX_Math",
+    // "KaTeX_Main",
+    // "KaTeX_AMS",
+    // "KaTeX_Caligraphic",
+    // "KaTeX_Fraktur",
+    // "KaTeX_SansSerif",
+    // "KaTeX_Script",
+    // "KaTeX_Size1",
+    // "KaTeX_Size2",
+    // "KaTeX_Size3",
+    // "KaTeX_Size4",
+    // "KaTeX_Typewriter",
+] as const;
+
+const FONT_FAMILY_EMOJI = [
+    "Emojis Additional",
+    "emojis",
+] as const;
+
+
 /* 默认配置选项 */
 export const DEFAULT_CONFIG: IConfig = {
     css: {
@@ -50,71 +101,35 @@ export const DEFAULT_CONFIG: IConfig = {
             enable: false,
             preview: DEFAULT_FONT_PREVIEW,
             list: [
-                "Helvetica Neue",
-                "Luxi Sans",
-                "DejaVu Sans",
-                "Hiragino Sans GB",
-                "Microsoft Yahei",
-                "sans-serif",
-
-                "Apple Color Emoji",
-                "Segoe UI Emoji",
-                "Noto Color Emoji",
-                "Segoe UI Symbol",
-                "Android Emoji",
-                "EmojiSymbols",
+                ...FONT_FAMILY,
             ],
         },
         editor: {
             enable: true,
             preview: DEFAULT_FONT_PREVIEW,
             list: [
+                ...FONT_FAMILY_PROTYLE,
             ],
         },
         code: {
             enable: false,
             preview: DEFAULT_FONT_PREVIEW,
             list: [
-                "JetBrainsMono-Regular",
-                "mononoki",
-                "Consolas",
-                "Liberation Mono",
-                "Menlo",
-                "Courier",
-                "monospace",
-
-                "Apple Color Emoji",
-                "Segoe UI Emoji",
-                "Noto Color Emoji",
-                "Segoe UI Symbol",
-                "Android Emoji",
-                "EmojiSymbols",
+                ...FONT_FAMILY_CODE,
             ],
         },
         graph: {
             enable: false,
             preview: DEFAULT_FONT_PREVIEW,
             list: [
-                "mononoki",
+                ...FONT_FAMILY_GRAPH,
             ],
         },
         math: {
             enable: false,
             preview: DEFAULT_FONT_PREVIEW,
             list: [
-                "KaTeX_Math",
-                "KaTeX_Main",
-
-                // "KaTeX_AMS",
-                // "KaTeX_Caligraphic",
-                // "KaTeX_Fraktur",
-                // "KaTeX_SansSerif",
-                // "KaTeX_Script",
-                // "KaTeX_Size1",
-                // "KaTeX_Size2",
-                // "KaTeX_Size3",
-                // "KaTeX_Size4",
-                // "KaTeX_Typewriter",
+                ...FONT_FAMILY_MATH,
             ],
         },
         emoji: {
@@ -122,13 +137,7 @@ export const DEFAULT_CONFIG: IConfig = {
             preview: DEFAULT_FONT_PREVIEW,
             list: [
                 "Twemoji Mozilla",
-
-                "Segoe UI Emoji",
-                "Segoe UI Symbol",
-                "Segoe UI",
-                "Apple Color Emoji",
-                "Noto Color Emoji",
-                "Android Emoji",
+                ...FONT_FAMILY_EMOJI,
             ],
         },
     },

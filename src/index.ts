@@ -21,27 +21,28 @@ import List from "@workspace/components/siyuan/list/List.svelte";
 import {
     FLAG_MOBILE,
 } from "@workspace/utils/env/front-end";
-import { classify } from "@workspace/utils/font";
+import { classifyBrowserFonts, classifySystemFonts } from "@workspace/utils/font";
 import { fontData2CssFontStyle } from "@workspace/utils/font/css";
 import { Logger } from "@workspace/utils/logger";
 import { mergeIgnoreArray } from "@workspace/utils/misc/merge";
 import {
     getBlockMenuContext,
-    type IOtherBlockMenuDetail,
+
 } from "@workspace/utils/siyuan/menu/block";
 import { renderSnippets } from "@workspace/utils/siyuan/snippet";
-
-import Settings from "./components/Settings.svelte";
 
 import { DEFAULT_CONFIG } from "./configs/default";
 import {
     fontFamilyStyle,
 } from "./utils/style";
 
+import Settings from "./components/Settings.svelte";
+
 import type { IListItem } from "@workspace/components/siyuan/list/list";
 import type { FontData } from "@workspace/types/misc/browser";
 import type { IClickBlockIconEvent } from "@workspace/types/siyuan/events";
 import type { Modify } from "@workspace/types/utils/readonly";
+import type { IOtherBlockMenuDetail } from "@workspace/utils/siyuan/menu/block";
 
 import type { I18N } from "@/utils/i18n";
 
@@ -90,15 +91,15 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         this.addCommand({
             langKey: "show-system-fonts",
             langText: this.i18n.settings.generalSettings.showSystemFonts.title,
-            hotkey: "",
             callback: () => this.showSystemFonts(),
         });
-        this.addCommand({
-            langKey: "show-usable-fonts",
-            langText: this.i18n.settings.generalSettings.showUsableFonts.title,
-            hotkey: "",
-            callback: () => this.showUsableFonts(),
-        });
+        if ("queryLocalFonts" in window) {
+            this.addCommand({
+                langKey: "show-usable-fonts",
+                langText: this.i18n.settings.generalSettings.showUsableFonts.title,
+                callback: () => this.showUsableFonts(),
+            });
+        }
 
         /* 加载数据 */
         this.loadData(CustomFontsPlugin.GLOBAL_CONFIG_NAME)
@@ -110,6 +111,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                 await this.updateStyle();
 
                 this.eventBus.on("click-blockicon", this.blockMenuEventListener);
+                this.eventBus.on("click-editortitleicon", this.blockMenuEventListener);
             });
     }
 
@@ -118,6 +120,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
 
     public override onunload(): void {
         this.eventBus.off("click-blockicon", this.blockMenuEventListener);
+        this.eventBus.off("click-editortitleicon", this.blockMenuEventListener);
 
         this.client.getSnippet({
             type: "all",
@@ -198,12 +201,12 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     }
 
     /* 重置插件配置 */
-    public async resetConfig(): Promise<void> {
+    public async resetConfig(): Promise<siyuan.IWebSocketData> {
         return this.updateConfig(mergeIgnoreArray(DEFAULT_CONFIG) as IConfig);
     }
 
     /* 更新插件配置 */
-    public async updateConfig(config?: IConfig): Promise<void> {
+    public async updateConfig(config?: IConfig): Promise<siyuan.IWebSocketData> {
         if (config && config !== this.config) {
             this.config = config;
         }
@@ -226,17 +229,32 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
             (response) => {
                 const dialog_body = dialog.element.querySelector(`#${this.SYSTEM_FONTS_DIALOG_ID}`)!;
                 if (response.code === 0) { // 请求成功
-                    const fonts: IListItem[] = response.data.map((font: string) => {
-                        return {
-                            icon: "#iconFont",
-                            text: font,
-                            meta: font,
-                            style: `font-family: "${font}"`,
-                        };
+                    const classified_fonts = classifySystemFonts(response.data);
+                    const fonts: IListItem[] = []; // 待显示的字体列表
+                    classified_fonts.families.forEach((family) => {
+                        const font_list = classified_fonts.map.get(family);
+                        if (font_list) {
+                            font_list.sort((a, b) => a.weight - b.weight);
+                            fonts.push({
+                                icon: "#iconFont",
+                                text: family,
+                                meta: `${family}`,
+                                style: `font-family: "${family}";`,
+                                fold: true,
+                                indent: "1em",
+                                children: font_list.map<IListItem>((font) => ({
+                                    // icon: "#iconFont",
+                                    narrow: true,
+                                    text: font.displayName,
+                                    meta: `${font.displayName} [${font.weight}]`,
+                                    style: `font-family: "${font.family}"; font-weight: ${font.weight};`,
+                                })),
+                            });
+                        }
                     });
 
                     dialog_body.innerHTML = ""; // 移除文本 "加载中"
-                    const list = new List({
+                    const list = mount(List, {
                         target: dialog_body,
                         props: {
                             items: fonts,
@@ -254,26 +272,27 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
     /* 显示当前可用的字体列表 */
     public async showUsableFonts(): Promise<void> {
         // REF https://developer.mozilla.org/en-US/docs/Web/API/Window/queryLocalFonts
-        if ("queryLocalFonts" in globalThis) { // 当前应用支持查询本地字体
+        if ("queryLocalFonts" in window) { // 当前应用支持查询本地字体
             const availableFonts = await window.queryLocalFonts(); // 本地字体列表
             const fonts: IListItem[] = []; // 待显示的字体列表
 
-            const classified_fonts = classify(availableFonts);
+            const classified_fonts = classifyBrowserFonts(availableFonts);
             classified_fonts.families.forEach((family) => {
                 const font_list = classified_fonts.map.get(family);
                 if (font_list) {
-                    const reaular_font = font_list.find((font) => font.style === "Regular") ?? font_list[0]!;
+                    font_list.sort((a, b) => a.fullName.localeCompare(b.fullName));
                     fonts.push({
                         icon: "#iconFont",
-                        text: reaular_font.fullName,
-                        meta: reaular_font.family,
-                        style: `font-family: "${reaular_font.family}"`,
+                        text: family,
+                        meta: `${family}`,
+                        style: `font-family: "${family}";`,
                         fold: true,
-                        indent: "18px",
+                        indent: "1em",
                         children: font_list.map((font) => ({
-                            icon: "#iconFont",
+                            // icon: "#iconFont",
+                            narrow: true,
                             text: font.fullName,
-                            meta: font.style,
+                            meta: `${font.fullName} [${font.postscriptName}]`,
                             style: `font: ${fontData2CssFontStyle(font, 14)};`,
                         })),
                     });
@@ -286,7 +305,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
                 height: `92vh`,
             });
 
-            const list = new List({
+            const list = mount(List, {
                 target: dialog.element.querySelector(`#${this.USABLE_FONTS_DIALOG_ID}`)!,
                 props: {
                     items: fonts,
