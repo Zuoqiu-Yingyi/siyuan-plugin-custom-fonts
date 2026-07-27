@@ -83,7 +83,6 @@ const FONT_FAMILY_EMOJI = [
     "emojis",
 ] as const;
 
-
 /* 默认配置选项 */
 export const DEFAULT_CONFIG: IConfig = {
     css: {
