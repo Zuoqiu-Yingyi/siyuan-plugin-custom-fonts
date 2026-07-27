@@ -29,7 +29,6 @@
 
     import type CustomFontsPlugin from "@/index";
     import type { IConfig } from "@/types/config";
-    import type { I18N } from "@/utils/i18n";
 
     interface IProps {
         config: IConfig; // 传入的配置项
@@ -43,7 +42,8 @@
         textareaHeight = 0,
     }: IProps = $props();
 
-    const i18n = plugin.i18n as unknown as I18N;
+    // svelte-ignore state_referenced_locally
+    const i18n = plugin.i18n;
 
     const base_font_family = "var(--b3-font-family)";
     const editor_font_family = "var(--b3-font-family-protyle)";
