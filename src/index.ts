@@ -30,6 +30,7 @@ import {
 
 } from "@workspace/utils/siyuan/menu/block";
 import { renderSnippets } from "@workspace/utils/siyuan/snippet";
+import { fn__code } from "@workspace/utils/siyuan/text/span";
 
 import { DEFAULT_CONFIG } from "./configs/default";
 import {
@@ -381,7 +382,8 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
 
             detail.menu.addItem({
                 icon: "iconFont",
-                label: this.i18n.menu.customBlockFont.label,
+                label: this.displayName,
+                accelerator: fn__code(this.name),
                 submenu,
             });
         }
