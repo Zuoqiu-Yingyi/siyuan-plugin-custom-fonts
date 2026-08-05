@@ -84,7 +84,7 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         this.USABLE_FONTS_DIALOG_ID = `plugin-${this.name}-usable-fonts-dialog`;
     }
 
-    public override onload(): void {
+    public override async onload(): Promise<void> {
         /**
          * 注册快捷键命令
          * 在 onload 结束后即刻解析, 因此不能在回调函数中注册
@@ -103,17 +103,18 @@ export default class CustomFontsPlugin extends siyuan.Plugin {
         }
 
         /* 加载数据 */
-        this.loadData(CustomFontsPlugin.GLOBAL_CONFIG_NAME)
-            .then((config) => {
-                this.config = mergeIgnoreArray(DEFAULT_CONFIG, config || {}) as IConfig;
-            })
-            .catch((error) => this.logger.error(error))
-            .finally(async () => {
-                await this.updateStyle();
+        try {
+            this.config = mergeIgnoreArray(DEFAULT_CONFIG, await this.loadData(CustomFontsPlugin.GLOBAL_CONFIG_NAME) || {}) as IConfig;
+        }
+        catch (error) {
+            this.logger.error(error);
+        }
+        finally {
+            await this.updateStyle();
 
-                this.eventBus.on("click-blockicon", this.blockMenuEventListener);
-                this.eventBus.on("click-editortitleicon", this.blockMenuEventListener);
-            });
+            this.eventBus.on("click-blockicon", this.blockMenuEventListener);
+            this.eventBus.on("click-editortitleicon", this.blockMenuEventListener);
+        }
     }
 
     public override onLayoutReady(): void {
