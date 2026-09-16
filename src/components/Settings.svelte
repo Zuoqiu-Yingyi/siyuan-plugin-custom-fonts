@@ -158,551 +158,577 @@
 <Panels
     focus={panels_focus_key}
     {panels}
-    let:focus={focusPanel}
 >
-    <!-- 常规设置面板 -->
-    <Panel display={panels[0].key === focusPanel}>
-        <!-- 重置设置 -->
-        <Item
-            text={i18n.settings.generalSettings.reset.description}
-            title={i18n.settings.generalSettings.reset.title}
-        >
-            <Input
-                slot="input"
-                settingKey="Reset"
-                settingValue={i18n.settings.generalSettings.reset.text}
-                type={ItemType.button}
-                on:clicked={resetOptions}
-            />
-        </Item>
+    {#snippet children(focusPanel)}
+        <!-- 常规设置面板 -->
+        <Panel display={panels[0].key === focusPanel}>
+            <!-- 重置设置 -->
+            <Item
+                text={i18n.settings.generalSettings.reset.description}
+                title={i18n.settings.generalSettings.reset.title}
+            >
+                {#snippet input()}
+                    <Input
+                        onClicked={resetOptions}
+                        settingKey="Reset"
+                        settingValue={i18n.settings.generalSettings.reset.text}
+                        type={ItemType.button}
+                    />
+                {/snippet}
+            </Item>
 
-        <!-- 查看系统字体 -->
-        <Item
-            text={i18n.settings.generalSettings.showSystemFonts.description}
-            title={i18n.settings.generalSettings.showSystemFonts.title}
-        >
-            <Input
-                slot="input"
-                settingKey="showSystemFonts"
-                settingValue={i18n.settings.generalSettings.showSystemFonts.text}
-                type={ItemType.button}
-                on:clicked={() => plugin.showSystemFonts()}
-            />
-        </Item>
+            <!-- 查看系统字体 -->
+            <Item
+                text={i18n.settings.generalSettings.showSystemFonts.description}
+                title={i18n.settings.generalSettings.showSystemFonts.title}
+            >
+                {#snippet input()}
+                    <Input
+                        onClicked={() => plugin.showSystemFonts()}
+                        settingKey="showSystemFonts"
+                        settingValue={i18n.settings.generalSettings.showSystemFonts.text}
+                        type={ItemType.button}
+                    />
+                {/snippet}
+            </Item>
 
-        <!-- 查看可用字体 -->
-        <Item
-            text={i18n.settings.generalSettings.showUsableFonts.description}
-            title={i18n.settings.generalSettings.showUsableFonts.title}
-        >
-            <Input
-                slot="input"
-                settingKey="showSystemFonts"
-                settingValue={i18n.settings.generalSettings.showUsableFonts.text}
-                type={ItemType.button}
-                on:clicked={() => plugin.showUsableFonts()}
-            />
-        </Item>
-    </Panel>
+            <!-- 查看可用字体 -->
+            <Item
+                text={i18n.settings.generalSettings.showUsableFonts.description}
+                title={i18n.settings.generalSettings.showUsableFonts.title}
+            >
+                {#snippet input()}
+                    <Input
+                        onClicked={() => plugin.showUsableFonts()}
+                        settingKey="showSystemFonts"
+                        settingValue={i18n.settings.generalSettings.showUsableFonts.text}
+                        type={ItemType.button}
+                    />
+                {/snippet}
+            </Item>
+        </Panel>
 
-    <!-- CSS 片段设置面板 -->
-    <Panel display={panels[1].key === focusPanel}>
-        <!-- 是否启用 CSS 片段 -->
-        <Item
-            text={i18n.settings.cssSettings.enable.description}
-            title={i18n.settings.cssSettings.enable.title}
-        >
-            <Input
-                slot="input"
-                settingKey="enable"
-                settingValue={config.css.enable}
-                type={ItemType.checkbox}
-                on:changed={(e) => {
-                    config.css.enable = e.detail.value;
-                    updated();
-                }}
-            />
-        </Item>
+        <!-- CSS 片段设置面板 -->
+        <Panel display={panels[1].key === focusPanel}>
+            <!-- 是否启用 CSS 片段 -->
+            <Item
+                text={i18n.settings.cssSettings.enable.description}
+                title={i18n.settings.cssSettings.enable.title}
+            >
+                {#snippet input()}
+                    <Input
+                        onChanged={(e) => {
+                            config.css.enable = e.value;
+                            updated();
+                        }}
+                        settingKey="enable"
+                        settingValue={config.css.enable}
+                        type={ItemType.checkbox}
+                    />
+                {/snippet}
+            </Item>
 
-        <!-- CSS 片段输入框 -->
-        <Item
-            block={true}
-            text={i18n.settings.cssSettings.snippet.description}
-            title={i18n.settings.cssSettings.snippet.title}
-        >
-            <Input
-                slot="input"
+            <!-- CSS 片段输入框 -->
+            <Item
                 block={true}
-                height={textareaHeight}
-                placeholder={i18n.settings.cssSettings.snippet.placeholder}
-                settingKey="code"
-                settingValue={config.css.code}
-                type={ItemType.textarea}
-                on:changed={(e) => {
-                    config.css.code = e.detail.value;
-                    updated();
-                }}
-            />
-        </Item>
-    </Panel>
-
-    <!-- 字体设置面板 -->
-    <Panel display={panels[2].key === focusPanel}>
-        <Tabs
-            focus={fonts_settings_tabs_focus_key}
-            tabs={tabs.fonts}
-            let:focus={focusTab}
-        >
-            <!-- 标签页 1 - 基础字体设置 -->
-            <div
-                class:fn__none={tabs.fonts[0].key !== focusTab}
-                data-type={tabs.fonts[0].name}
+                text={i18n.settings.cssSettings.snippet.description}
+                title={i18n.settings.cssSettings.snippet.title}
             >
-                <!-- 是否启用自定义字体列表 -->
-                <Item
-                    text={i18n.settings.fontsSettings.base.enable.description}
-                    title={i18n.settings.fontsSettings.base.enable.title}
-                >
+                {#snippet input()}
                     <Input
-                        slot="input"
-                        settingKey="enable"
-                        settingValue={config.fonts.base.enable}
-                        type={ItemType.checkbox}
-                        on:changed={(e) => {
-                            config.fonts.base.enable = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
-
-                <!-- 字体样式预览 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.preview.description}
-                    title={i18n.settings.fontsSettings.preview.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        fontFamily={base_font_family}
-                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
-                        settingKey="preview"
-                        settingValue={config.fonts.base.preview}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            config.fonts.base.preview = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
-
-                <!-- 自定义字体列表 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.base.fontsList.description}
-                    title={i18n.settings.fontsSettings.base.fontsList.title}
-                >
-                    <Input
-                        slot="input"
                         block={true}
                         height={textareaHeight}
-                        placeholder={i18n.settings.fontsSettings.base.fontsList.placeholder}
-                        settingKey="list"
-                        settingValue={config.fonts.base.list.join("\n")}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            if (e.detail.value === "") {
-                                config.fonts.base.list = [];
-                            }
-                            else {
-                                config.fonts.base.list = e.detail.value.split("\n");
-                            }
+                        onChanged={(e) => {
+                            config.css.code = e.value;
                             updated();
                         }}
+                        placeholder={i18n.settings.cssSettings.snippet.placeholder}
+                        settingKey="code"
+                        settingValue={config.css.code}
+                        type={ItemType.textarea}
                     />
-                </Item>
-            </div>
+                {/snippet}
+            </Item>
+        </Panel>
 
-            <!-- 标签页 2 - 编辑器字体设置 -->
-            <div
-                class:fn__none={tabs.fonts[1].key !== focusTab}
-                data-type={tabs.fonts[1].name}
+        <!-- 字体设置面板 -->
+        <Panel display={panels[2].key === focusPanel}>
+            <Tabs
+                focus={fonts_settings_tabs_focus_key}
+                tabs={tabs.fonts}
             >
-                <!-- 是否启用自定义字体列表 -->
-                <Item
-                    text={i18n.settings.fontsSettings.editor.enable.description}
-                    title={i18n.settings.fontsSettings.editor.enable.title}
-                >
-                    <Input
-                        slot="input"
-                        settingKey="enable"
-                        settingValue={config.fonts.editor.enable}
-                        type={ItemType.checkbox}
-                        on:changed={(e) => {
-                            config.fonts.editor.enable = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                {#snippet children(focusTab)}
+                    <!-- 标签页 1 - 基础字体设置 -->
+                    <div
+                        class:fn__none={tabs.fonts[0].key !== focusTab}
+                        data-type={tabs.fonts[0].name}
+                    >
+                        <!-- 是否启用自定义字体列表 -->
+                        <Item
+                            text={i18n.settings.fontsSettings.base.enable.description}
+                            title={i18n.settings.fontsSettings.base.enable.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    onChanged={(e) => {
+                                        config.fonts.base.enable = e.value;
+                                        updated();
+                                    }}
+                                    settingKey="enable"
+                                    settingValue={config.fonts.base.enable}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 字体样式预览 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.preview.description}
-                    title={i18n.settings.fontsSettings.preview.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        fontFamily={editor_font_family}
-                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
-                        settingKey="preview"
-                        settingValue={config.fonts.editor.preview}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            config.fonts.editor.preview = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                        <!-- 字体样式预览 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.preview.description}
+                            title={i18n.settings.fontsSettings.preview.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    fontFamily={base_font_family}
+                                    onChanged={(e) => {
+                                        config.fonts.base.preview = e.value;
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                                    settingKey="preview"
+                                    settingValue={config.fonts.base.preview}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 自定义字体列表 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.editor.fontsList.description}
-                    title={i18n.settings.fontsSettings.editor.fontsList.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        height={textareaHeight}
-                        placeholder={i18n.settings.fontsSettings.editor.fontsList.placeholder}
-                        settingKey="list"
-                        settingValue={config.fonts.editor.list.join("\n")}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            if (e.detail.value === "") {
-                                config.fonts.editor.list = [];
-                            }
-                            else {
-                                config.fonts.editor.list = e.detail.value.split("\n");
-                            }
-                            updated();
-                        }}
-                    />
-                </Item>
-            </div>
+                        <!-- 自定义字体列表 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.base.fontsList.description}
+                            title={i18n.settings.fontsSettings.base.fontsList.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    height={textareaHeight}
+                                    onChanged={(e) => {
+                                        if (e.value === "") {
+                                            config.fonts.base.list = [];
+                                        }
+                                        else {
+                                            config.fonts.base.list = e.value.split("\n");
+                                        }
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.base.fontsList.placeholder}
+                                    settingKey="list"
+                                    settingValue={config.fonts.base.list.join("\n")}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
 
-            <!-- 标签页 3 - 代码字体设置 -->
-            <div
-                class:fn__none={tabs.fonts[2].key !== focusTab}
-                data-type={tabs.fonts[2].name}
-            >
-                <!-- 是否启用自定义字体列表 -->
-                <Item
-                    text={i18n.settings.fontsSettings.code.enable.description}
-                    title={i18n.settings.fontsSettings.code.enable.title}
-                >
-                    <Input
-                        slot="input"
-                        settingKey="enable"
-                        settingValue={config.fonts.code.enable}
-                        type={ItemType.checkbox}
-                        on:changed={(e) => {
-                            config.fonts.code.enable = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                    <!-- 标签页 2 - 编辑器字体设置 -->
+                    <div
+                        class:fn__none={tabs.fonts[1].key !== focusTab}
+                        data-type={tabs.fonts[1].name}
+                    >
+                        <!-- 是否启用自定义字体列表 -->
+                        <Item
+                            text={i18n.settings.fontsSettings.editor.enable.description}
+                            title={i18n.settings.fontsSettings.editor.enable.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    onChanged={(e) => {
+                                        config.fonts.editor.enable = e.value;
+                                        updated();
+                                    }}
+                                    settingKey="enable"
+                                    settingValue={config.fonts.editor.enable}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 字体样式预览 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.preview.description}
-                    title={i18n.settings.fontsSettings.preview.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        fontFamily={code_font_family}
-                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
-                        settingKey="preview"
-                        settingValue={config.fonts.code.preview}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            config.fonts.code.preview = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                        <!-- 字体样式预览 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.preview.description}
+                            title={i18n.settings.fontsSettings.preview.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    fontFamily={editor_font_family}
+                                    onChanged={(e) => {
+                                        config.fonts.editor.preview = e.value;
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                                    settingKey="preview"
+                                    settingValue={config.fonts.editor.preview}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 自定义字体列表 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.code.fontsList.description}
-                    title={i18n.settings.fontsSettings.code.fontsList.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        height={textareaHeight}
-                        placeholder={i18n.settings.fontsSettings.code.fontsList.placeholder}
-                        settingKey="list"
-                        settingValue={config.fonts.code.list.join("\n")}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            if (e.detail.value === "") {
-                                config.fonts.code.list = [];
-                            }
-                            else {
-                                config.fonts.code.list = e.detail.value.split("\n");
-                            }
-                            updated();
-                        }}
-                    />
-                </Item>
-            </div>
+                        <!-- 自定义字体列表 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.editor.fontsList.description}
+                            title={i18n.settings.fontsSettings.editor.fontsList.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    height={textareaHeight}
+                                    onChanged={(e) => {
+                                        if (e.value === "") {
+                                            config.fonts.editor.list = [];
+                                        }
+                                        else {
+                                            config.fonts.editor.list = e.value.split("\n");
+                                        }
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.editor.fontsList.placeholder}
+                                    settingKey="list"
+                                    settingValue={config.fonts.editor.list.join("\n")}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
 
-            <!-- 标签页 4 - 图表字体设置 -->
-            <div
-                class:fn__none={tabs.fonts[3].key !== focusTab}
-                data-type={tabs.fonts[3].name}
-            >
-                <!-- 是否启用自定义字体列表 -->
-                <Item
-                    text={i18n.settings.fontsSettings.graph.enable.description}
-                    title={i18n.settings.fontsSettings.graph.enable.title}
-                >
-                    <Input
-                        slot="input"
-                        settingKey="enable"
-                        settingValue={config.fonts.graph.enable}
-                        type={ItemType.checkbox}
-                        on:changed={(e) => {
-                            config.fonts.graph.enable = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                    <!-- 标签页 3 - 代码字体设置 -->
+                    <div
+                        class:fn__none={tabs.fonts[2].key !== focusTab}
+                        data-type={tabs.fonts[2].name}
+                    >
+                        <!-- 是否启用自定义字体列表 -->
+                        <Item
+                            text={i18n.settings.fontsSettings.code.enable.description}
+                            title={i18n.settings.fontsSettings.code.enable.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    onChanged={(e) => {
+                                        config.fonts.code.enable = e.value;
+                                        updated();
+                                    }}
+                                    settingKey="enable"
+                                    settingValue={config.fonts.code.enable}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 字体样式预览 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.preview.description}
-                    title={i18n.settings.fontsSettings.preview.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        fontFamily={graph_font_family}
-                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
-                        settingKey="preview"
-                        settingValue={config.fonts.graph.preview}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            config.fonts.graph.preview = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                        <!-- 字体样式预览 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.preview.description}
+                            title={i18n.settings.fontsSettings.preview.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    fontFamily={code_font_family}
+                                    onChanged={(e) => {
+                                        config.fonts.code.preview = e.value;
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                                    settingKey="preview"
+                                    settingValue={config.fonts.code.preview}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 自定义字体列表 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.graph.fontsList.description}
-                    title={i18n.settings.fontsSettings.graph.fontsList.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        height={textareaHeight}
-                        placeholder={i18n.settings.fontsSettings.graph.fontsList.placeholder}
-                        settingKey="list"
-                        settingValue={config.fonts.graph.list.join("\n")}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            if (e.detail.value === "") {
-                                config.fonts.graph.list = [];
-                            }
-                            else {
-                                config.fonts.graph.list = e.detail.value.split("\n");
-                            }
-                            updated();
-                        }}
-                    />
-                </Item>
-            </div>
+                        <!-- 自定义字体列表 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.code.fontsList.description}
+                            title={i18n.settings.fontsSettings.code.fontsList.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    height={textareaHeight}
+                                    onChanged={(e) => {
+                                        if (e.value === "") {
+                                            config.fonts.code.list = [];
+                                        }
+                                        else {
+                                            config.fonts.code.list = e.value.split("\n");
+                                        }
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.code.fontsList.placeholder}
+                                    settingKey="list"
+                                    settingValue={config.fonts.code.list.join("\n")}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
 
-            <!-- 标签页 5 - 数学字体设置 -->
-            <div
-                class:fn__none={tabs.fonts[4].key !== focusTab}
-                data-type={tabs.fonts[4].name}
-            >
-                <!-- 是否启用自定义字体列表 -->
-                <Item
-                    text={i18n.settings.fontsSettings.math.enable.description}
-                    title={i18n.settings.fontsSettings.math.enable.title}
-                >
-                    <Input
-                        slot="input"
-                        settingKey="enable"
-                        settingValue={config.fonts.math.enable}
-                        type={ItemType.checkbox}
-                        on:changed={(e) => {
-                            config.fonts.math.enable = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                    <!-- 标签页 4 - 图表字体设置 -->
+                    <div
+                        class:fn__none={tabs.fonts[3].key !== focusTab}
+                        data-type={tabs.fonts[3].name}
+                    >
+                        <!-- 是否启用自定义字体列表 -->
+                        <Item
+                            text={i18n.settings.fontsSettings.graph.enable.description}
+                            title={i18n.settings.fontsSettings.graph.enable.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    onChanged={(e) => {
+                                        config.fonts.graph.enable = e.value;
+                                        updated();
+                                    }}
+                                    settingKey="enable"
+                                    settingValue={config.fonts.graph.enable}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 字体样式预览 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.preview.description}
-                    title={i18n.settings.fontsSettings.preview.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        fontFamily={math_font_family}
-                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
-                        settingKey="preview"
-                        settingValue={config.fonts.math.preview}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            config.fonts.math.preview = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                        <!-- 字体样式预览 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.preview.description}
+                            title={i18n.settings.fontsSettings.preview.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    fontFamily={graph_font_family}
+                                    onChanged={(e) => {
+                                        config.fonts.graph.preview = e.value;
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                                    settingKey="preview"
+                                    settingValue={config.fonts.graph.preview}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 自定义字体列表 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.math.fontsList.description}
-                    title={i18n.settings.fontsSettings.math.fontsList.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        height={textareaHeight}
-                        placeholder={i18n.settings.fontsSettings.math.fontsList.placeholder}
-                        settingKey="list"
-                        settingValue={config.fonts.math.list.join("\n")}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            if (e.detail.value === "") {
-                                config.fonts.math.list = [];
-                            }
-                            else {
-                                config.fonts.math.list = e.detail.value.split("\n");
-                            }
-                            updated();
-                        }}
-                    />
-                </Item>
-            </div>
+                        <!-- 自定义字体列表 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.graph.fontsList.description}
+                            title={i18n.settings.fontsSettings.graph.fontsList.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    height={textareaHeight}
+                                    onChanged={(e) => {
+                                        if (e.value === "") {
+                                            config.fonts.graph.list = [];
+                                        }
+                                        else {
+                                            config.fonts.graph.list = e.value.split("\n");
+                                        }
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.graph.fontsList.placeholder}
+                                    settingKey="list"
+                                    settingValue={config.fonts.graph.list.join("\n")}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
 
-            <!-- 标签页 6 - 表情符号字体设置 -->
-            <div
-                class:fn__none={tabs.fonts[5].key !== focusTab}
-                data-type={tabs.fonts[5].name}
-            >
-                <!-- 是否启用自定义字体列表 -->
-                <Item
-                    text={i18n.settings.fontsSettings.emoji.enable.description}
-                    title={i18n.settings.fontsSettings.emoji.enable.title}
-                >
-                    <Input
-                        slot="input"
-                        settingKey="enable"
-                        settingValue={config.fonts.emoji.enable}
-                        type={ItemType.checkbox}
-                        on:changed={(e) => {
-                            config.fonts.emoji.enable = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                    <!-- 标签页 5 - 数学字体设置 -->
+                    <div
+                        class:fn__none={tabs.fonts[4].key !== focusTab}
+                        data-type={tabs.fonts[4].name}
+                    >
+                        <!-- 是否启用自定义字体列表 -->
+                        <Item
+                            text={i18n.settings.fontsSettings.math.enable.description}
+                            title={i18n.settings.fontsSettings.math.enable.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    onChanged={(e) => {
+                                        config.fonts.math.enable = e.value;
+                                        updated();
+                                    }}
+                                    settingKey="enable"
+                                    settingValue={config.fonts.math.enable}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 字体样式预览 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.preview.description}
-                    title={i18n.settings.fontsSettings.preview.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        fontFamily={emoji_font_family}
-                        placeholder={i18n.settings.fontsSettings.preview.placeholder}
-                        settingKey="preview"
-                        settingValue={config.fonts.emoji.preview}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            config.fonts.emoji.preview = e.detail.value;
-                            updated();
-                        }}
-                    />
-                </Item>
+                        <!-- 字体样式预览 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.preview.description}
+                            title={i18n.settings.fontsSettings.preview.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    fontFamily={math_font_family}
+                                    onChanged={(e) => {
+                                        config.fonts.math.preview = e.value;
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                                    settingKey="preview"
+                                    settingValue={config.fonts.math.preview}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
 
-                <!-- 自定义字体列表 -->
-                <Item
-                    block={true}
-                    text={i18n.settings.fontsSettings.emoji.fontsList.description}
-                    title={i18n.settings.fontsSettings.emoji.fontsList.title}
-                >
-                    <Input
-                        slot="input"
-                        block={true}
-                        height={textareaHeight}
-                        placeholder={i18n.settings.fontsSettings.emoji.fontsList.placeholder}
-                        settingKey="list"
-                        settingValue={config.fonts.emoji.list.join("\n")}
-                        type={ItemType.textarea}
-                        on:changed={(e) => {
-                            if (e.detail.value === "") {
-                                config.fonts.emoji.list = [];
-                            }
-                            else {
-                                config.fonts.emoji.list = e.detail.value.split("\n");
-                            }
-                            updated();
-                        }}
-                    />
-                </Item>
-            </div>
-        </Tabs>
-    </Panel>
+                        <!-- 自定义字体列表 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.math.fontsList.description}
+                            title={i18n.settings.fontsSettings.math.fontsList.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    height={textareaHeight}
+                                    onChanged={(e) => {
+                                        if (e.value === "") {
+                                            config.fonts.math.list = [];
+                                        }
+                                        else {
+                                            config.fonts.math.list = e.value.split("\n");
+                                        }
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.math.fontsList.placeholder}
+                                    settingKey="list"
+                                    settingValue={config.fonts.math.list.join("\n")}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
 
-    <!-- 块菜单设置面板 -->
-    <Panel display={panels[3].key === focusPanel}>
-        <!-- CSS 片段输入框 -->
-        <Item
-            block={true}
-            text={i18n.settings.menuSettings.blockFontList.description}
-            title={i18n.settings.menuSettings.blockFontList.title}
-        >
-            <Input
-                slot="input"
+                    <!-- 标签页 6 - 表情符号字体设置 -->
+                    <div
+                        class:fn__none={tabs.fonts[5].key !== focusTab}
+                        data-type={tabs.fonts[5].name}
+                    >
+                        <!-- 是否启用自定义字体列表 -->
+                        <Item
+                            text={i18n.settings.fontsSettings.emoji.enable.description}
+                            title={i18n.settings.fontsSettings.emoji.enable.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    onChanged={(e) => {
+                                        config.fonts.emoji.enable = e.value;
+                                        updated();
+                                    }}
+                                    settingKey="enable"
+                                    settingValue={config.fonts.emoji.enable}
+                                    type={ItemType.checkbox}
+                                />
+                            {/snippet}
+                        </Item>
+
+                        <!-- 字体样式预览 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.preview.description}
+                            title={i18n.settings.fontsSettings.preview.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    fontFamily={emoji_font_family}
+                                    onChanged={(e) => {
+                                        config.fonts.emoji.preview = e.value;
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.preview.placeholder}
+                                    settingKey="preview"
+                                    settingValue={config.fonts.emoji.preview}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+
+                        <!-- 自定义字体列表 -->
+                        <Item
+                            block={true}
+                            text={i18n.settings.fontsSettings.emoji.fontsList.description}
+                            title={i18n.settings.fontsSettings.emoji.fontsList.title}
+                        >
+                            {#snippet input()}
+                                <Input
+                                    block={true}
+                                    height={textareaHeight}
+                                    onChanged={(e) => {
+                                        if (e.value === "") {
+                                            config.fonts.emoji.list = [];
+                                        }
+                                        else {
+                                            config.fonts.emoji.list = e.value.split("\n");
+                                        }
+                                        updated();
+                                    }}
+                                    placeholder={i18n.settings.fontsSettings.emoji.fontsList.placeholder}
+                                    settingKey="list"
+                                    settingValue={config.fonts.emoji.list.join("\n")}
+                                    type={ItemType.textarea}
+                                />
+                            {/snippet}
+                        </Item>
+                    </div>
+                {/snippet}
+            </Tabs>
+        </Panel>
+
+        <!-- 块菜单设置面板 -->
+        <Panel display={panels[3].key === focusPanel}>
+            <!-- CSS 片段输入框 -->
+            <Item
                 block={true}
-                height={textareaHeight}
-                placeholder={i18n.settings.menuSettings.blockFontList.placeholder}
-                settingKey="list"
-                settingValue={config.menu.block.list.join("\n")}
-                type={ItemType.textarea}
-                on:changed={(e) => {
-                    if (e.detail.value === "") {
-                        config.menu.block.list = [];
-                    }
-                    else {
-                        config.menu.block.list = e.detail.value.split("\n");
-                    }
-                    updated();
-                }}
-            />
-        </Item>
-    </Panel>
+                text={i18n.settings.menuSettings.blockFontList.description}
+                title={i18n.settings.menuSettings.blockFontList.title}
+            >
+                {#snippet input()}
+                    <Input
+                        block={true}
+                        height={textareaHeight}
+                        onChanged={(e) => {
+                            if (e.value === "") {
+                                config.menu.block.list = [];
+                            }
+                            else {
+                                config.menu.block.list = e.value.split("\n");
+                            }
+                            updated();
+                        }}
+                        placeholder={i18n.settings.menuSettings.blockFontList.placeholder}
+                        settingKey="list"
+                        settingValue={config.menu.block.list.join("\n")}
+                        type={ItemType.textarea}
+                    />
+                {/snippet}
+            </Item>
+        </Panel>
+    {/snippet}
 </Panels>
 
 <style lang="less">
